@@ -37,5 +37,5 @@ class Dataset(ABC):
     def get_numpy_dict(self):
         
         dataset_dictionary          = {}
-        dataset_dictionary["data"]  = np.stack([cluster.numpy_cluster for cluster in self.clusters])
+        dataset_dictionary["data"]  = [cluster.numpy_cluster for cluster in self.clusters]
         return dataset_dictionary
