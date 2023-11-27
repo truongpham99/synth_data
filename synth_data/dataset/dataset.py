@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Dataset(ABC):
 
@@ -23,6 +24,10 @@ class Dataset(ABC):
 
         if patience_counter == self.patience:
             raise ValueError(F"Failed to generate data after {self.patience} attempts!")
+
+        # for cluster in self.clusters:
+        #     cluster.draw()
+        # _ = self.validate_clusters()
 
 
     def validate_clusters(self):

@@ -19,6 +19,7 @@ if __name__ == "__main__":
     
     clusters = numpy_dict["data"]
     for cluster in clusters:
+        print(cluster.shape)
         plt.scatter(cluster[:,0], cluster[:,1])
     
     plt.savefig("test.png")

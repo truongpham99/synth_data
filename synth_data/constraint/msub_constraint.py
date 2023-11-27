@@ -11,3 +11,11 @@ class MaximumSimilarityUpperBoundConstraint(SingleSimilarityConstraint):
 
     def kernel_check(self, sim_kern):
         return sim_kern <= self.threshold
+    
+    def heuristic(self, sim_kern):
+        row_sum = np.sum(sim_kern, axis=1)
+        remove_idx = np.argmax(row_sum)
+        return remove_idx
+    
+    def __str__(self) -> str:
+        return f"MaxSimUB({self.cluster_idxs})"

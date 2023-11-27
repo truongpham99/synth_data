@@ -5,13 +5,13 @@
     "patience":         1000,
     "cluster_configs": [
         {
-            "num_points":           5,
+            "num_points":           20,
             "type":                 "gaussian",
             "mean_vector":          [2,0],
             "covariance_matrix":    [[0.01,0],[0,1]]
         },
         {
-            "num_points":           5,
+            "num_points":           500,
             "type":                 "gaussian",
             "mean_vector":          [0,2],
             "covariance_matrix":    [[0.5,0.05],[0.05,0.5]]
@@ -29,12 +29,6 @@
             "cluster_idxs":     [1,1],
             "metric":           "rbf_1",
             "min_similarity":   0.5
-        },
-        {
-            "type":             "max_similarity",
-            "cluster_idxs":     [0,1],
-            "metric":           "rbf_1",
-            "max_similarity":   0.5
         }
     ]
 }

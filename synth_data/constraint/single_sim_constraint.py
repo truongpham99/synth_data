@@ -11,6 +11,7 @@ class SingleSimilarityConstraint(Constraint, ABC):
         enforced_clusters = [list_of_clusters[i] for i in cluster_idxs]
         super().__init__(enforced_clusters)
 
+        self.cluster_idxs   = cluster_idxs
         self.threshold      = threshold
         self.metric         = metric
 
@@ -35,13 +36,19 @@ class SingleSimilarityConstraint(Constraint, ABC):
 
     @abstractmethod
     def kernel_check(self, sim_kern):
-        pass
+        print("kernel check not implemented")
 
+    @abstractmethod
+    def heuristic(self, sim_kern):
+        print("heuristic not implemented")
 
     def enforce(self):
         
         n_clusters          = len(self.clusters)
         cluster_removal_idx = {i: set() for i in range(n_clusters)}
+        intra_cluster = False
+        if self.cluster_idxs[0] == self.cluster_idxs[1]:
+            intra_cluster = True
 
         # Mark idx that should be removed
         for i in range(n_clusters):
@@ -49,12 +56,11 @@ class SingleSimilarityConstraint(Constraint, ABC):
                 cluster_1_np    = self.clusters[i].numpy_cluster
                 cluster_2_np    = self.clusters[j].numpy_cluster
                 sim_kern        = self.compute_sim_kern(cluster_1_np, cluster_2_np)
-                good_cells      = self.kernel_check(sim_kern)
-                remove_1_idx    = np.arange(cluster_1_np.shape[0])[~np.all(good_cells, axis=1)]
-                remove_2_idx    = np.arange(cluster_2_np.shape[0])[~np.all(good_cells, axis=0)]
-                cluster_removal_idx[i].update(remove_1_idx.tolist())
-                cluster_removal_idx[j].update(remove_2_idx.tolist())
-            
+                remove_idxes    = self._selection(sim_kern, intra_cluster)
+                remove_1_idx    = remove_idxes[0]
+                remove_2_idx    = remove_idxes[1]
+                cluster_removal_idx[i].update(remove_1_idx)
+                cluster_removal_idx[j].update(remove_2_idx)
         # For each cluster, keep only that which isn't slated for removal
         removed_any = False
         for i in range(n_clusters):
@@ -64,3 +70,36 @@ class SingleSimilarityConstraint(Constraint, ABC):
             self.clusters[i].numpy_cluster  = self.clusters[i].numpy_cluster[keep_idx]
 
         return not removed_any
+    
+    def _selection(self, sim_kern, intra_cluster = False):
+        flag = True
+        cluster1_len = sim_kern.shape[0]
+        cluster2_len = sim_kern.shape[1]
+
+        cluster1_good_idx = list(range(cluster1_len))
+        cluster2_good_idx = list(range(cluster2_len))
+
+        while not np.all(self.kernel_check(sim_kern)):
+            if flag:
+                removal_idx = self.heuristic(sim_kern)
+                cluster1_good_idx.pop(removal_idx)
+                sim_kern = np.delete(sim_kern, removal_idx, 1)
+                if intra_cluster:
+                    sim_kern = np.delete(sim_kern, removal_idx, 0)
+            else:
+                removal_idx = self.heuristic(sim_kern.T)
+                cluster2_good_idx.pop(removal_idx)
+                sim_kern = np.delete(sim_kern, removal_idx, 0)
+            
+            if flag and not intra_cluster:
+                flag = False
+            elif not flag and not intra_cluster:
+                flag = True
+        
+        cluster1_idx = np.arange(cluster1_len)
+        cluster2_idx = np.arange(cluster2_len)
+
+        cluster1_removal_idx = cluster1_idx[~np.isin(cluster1_idx, cluster1_good_idx)]
+        cluster2_removal_idx = cluster2_idx[~np.isin(cluster2_idx, cluster2_good_idx)]
+        return cluster1_removal_idx, cluster2_removal_idx
+                
