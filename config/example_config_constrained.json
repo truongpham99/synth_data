@@ -22,13 +22,13 @@
             "type":             "min_similarity",
             "cluster_idxs":     [0,0],
             "metric":           "rbf_1",
-            "min_similarity":   0.5
+            "min_similarity":   0.6
         },
         {
             "type":             "min_similarity",
             "cluster_idxs":     [1,1],
             "metric":           "rbf_1",
-            "min_similarity":   0.5
+            "min_similarity":   0.4
         }
     ]
 }

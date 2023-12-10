@@ -12,3 +12,4 @@ synth_data/constraint/__pycache__/single_sim_constraint.cpython-39.pyc
 synth_data/similar_theory/__pycache__/__init__.cpython-39.pyc
 synth_data/similar_theory/__pycache__/bounds.cpython-39.pyc
 test.py
+*.pyc
