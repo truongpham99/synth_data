@@ -20,7 +20,3 @@ class DataGeneratorMain:
         
         with open(output_loc, "wb") as output_location:
             pickle.dump(numpy_dict, output_location)
-    
-    def random_selection(self, dset_loc):
-        with open(dset_loc, "rb") as f:
-            numpy_dict = pickle.load(f)

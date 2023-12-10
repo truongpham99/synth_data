@@ -17,5 +17,9 @@ class MaximumSimilarityUpperBoundConstraint(SingleSimilarityConstraint):
         remove_idx = np.argmax(row_sum)
         return remove_idx
     
+    def calculate_constraint(self, sim_kernel):
+        return sim_kernel.max()
+
+    
     def __str__(self) -> str:
         return f"MaxSimUB({self.cluster_idxs})"

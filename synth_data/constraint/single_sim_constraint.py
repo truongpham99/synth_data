@@ -15,6 +15,11 @@ class SingleSimilarityConstraint(Constraint, ABC):
         self.threshold      = threshold
         self.metric         = metric
 
+        if self.cluster_idxs[0] == self.cluster_idxs[1]:
+            self.intra_cluster = True
+        else:
+            self.intra_cluster = False
+
 
     def compute_sim_kern(self, cluster_1, cluster_2):
 
@@ -42,13 +47,15 @@ class SingleSimilarityConstraint(Constraint, ABC):
     def heuristic(self, sim_kern):
         print("heuristic not implemented")
 
+    @abstractmethod
+    def calculate_constraint(self, sim_kernel):
+        print("calculate_constraint not implemented")
+
+
     def enforce(self):
         
         n_clusters          = len(self.clusters)
         cluster_removal_idx = {i: set() for i in range(n_clusters)}
-        intra_cluster = False
-        if self.cluster_idxs[0] == self.cluster_idxs[1]:
-            intra_cluster = True
 
         # Mark idx that should be removed
         for i in range(n_clusters):
@@ -56,7 +63,7 @@ class SingleSimilarityConstraint(Constraint, ABC):
                 cluster_1_np    = self.clusters[i].numpy_cluster
                 cluster_2_np    = self.clusters[j].numpy_cluster
                 sim_kern        = self.compute_sim_kern(cluster_1_np, cluster_2_np)
-                remove_idxes    = self._selection(sim_kern, intra_cluster)
+                remove_idxes    = self._selection(sim_kern)
                 remove_1_idx    = remove_idxes[0]
                 remove_2_idx    = remove_idxes[1]
                 cluster_removal_idx[i].update(remove_1_idx)
@@ -71,7 +78,7 @@ class SingleSimilarityConstraint(Constraint, ABC):
 
         return not removed_any
     
-    def _selection(self, sim_kern, intra_cluster = False):
+    def _selection(self, sim_kern):
         flag = True
         cluster1_len = sim_kern.shape[0]
         cluster2_len = sim_kern.shape[1]
@@ -84,16 +91,16 @@ class SingleSimilarityConstraint(Constraint, ABC):
                 removal_idx = self.heuristic(sim_kern)
                 cluster1_good_idx.pop(removal_idx)
                 sim_kern = np.delete(sim_kern, removal_idx, 1)
-                if intra_cluster:
+                if self.intra_cluster:
                     sim_kern = np.delete(sim_kern, removal_idx, 0)
             else:
                 removal_idx = self.heuristic(sim_kern.T)
                 cluster2_good_idx.pop(removal_idx)
                 sim_kern = np.delete(sim_kern, removal_idx, 0)
             
-            if flag and not intra_cluster:
+            if flag and not self.intra_cluster:
                 flag = False
-            elif not flag and not intra_cluster:
+            elif not flag and not self.intra_cluster:
                 flag = True
         
         cluster1_idx = np.arange(cluster1_len)

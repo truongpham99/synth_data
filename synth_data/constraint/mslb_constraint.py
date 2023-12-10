@@ -16,6 +16,9 @@ class MinimumSimilarityLowerBoundConstraint(SingleSimilarityConstraint):
         row_sum = np.sum(sim_kern, axis=1)
         remove_idx = np.argmin(row_sum)
         return remove_idx
+    
+    def calculate_constraint(self, sim_kernel):
+        return sim_kernel.min()
 
     def __str__(self) -> str:
         return f"MinSimLB({self.cluster_idxs})"
