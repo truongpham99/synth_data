@@ -22,4 +22,11 @@ if __name__ == "__main__":
         print(cluster.shape)
         plt.scatter(cluster[:,0], cluster[:,1])
     
+    # with open("subset_output.np", "rb") as f:
+    #     numpy_dict = pickle.load(f)
+    # subset_clusters = numpy_dict["data"]
+    # for cluster in subset_clusters:
+    #     print(cluster.shape)
+    #     plt.scatter(cluster[:,0], cluster[:,1])
+
     plt.savefig("test.png")

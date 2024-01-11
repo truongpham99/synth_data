@@ -79,6 +79,10 @@ class SingleSimilarityConstraint(Constraint, ABC):
         return not removed_any
     
     def _selection(self, sim_kern):
+        """
+            Description:
+                selecting points that don't conform the constraint
+        """
         flag = True
         cluster1_len = sim_kern.shape[0]
         cluster2_len = sim_kern.shape[1]

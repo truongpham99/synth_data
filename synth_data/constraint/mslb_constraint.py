@@ -22,3 +22,23 @@ class MinimumSimilarityLowerBoundConstraint(SingleSimilarityConstraint):
 
     def __str__(self) -> str:
         return f"MinSimLB({self.cluster_idxs})"
+    
+class MaximumSimilarityLowerBoundConstraint(SingleSimilarityConstraint):
+
+    def __init__(self, min_similarity, metric, cluster_idxs, list_of_clusters):
+        
+        super().__init__(min_similarity, metric, cluster_idxs, list_of_clusters)
+
+
+    def kernel_check(self, sim_kern):
+        return sim_kern >= self.threshold
+        
+    def calculate_constraint(self, sim_kernel):
+        return sim_kernel.max(axis=0).min()
+    
+    def heuristic(self, sim_kern):
+        print("{} heuristic not implemented".format(self.__str__))
+    
+    def __str__(self) -> str:
+        return f"MinSimLB({self.cluster_idxs})"
+    
