@@ -44,7 +44,7 @@ class SingleSimilarityConstraint(Constraint, ABC):
         print("kernel check not implemented")
 
     @abstractmethod
-    def heuristic(self, sim_kern):
+    def heuristic(self, sim_kern, axis=1):
         print("heuristic not implemented")
 
     @abstractmethod
@@ -82,8 +82,9 @@ class SingleSimilarityConstraint(Constraint, ABC):
         """
             Description:
                 selecting points that don't conform the constraint
+                alternate removing from cluster 1 and 2
         """
-        flag = True
+        remove_from_cluster_1 = True
         cluster1_len = sim_kern.shape[0]
         cluster2_len = sim_kern.shape[1]
 
@@ -91,21 +92,21 @@ class SingleSimilarityConstraint(Constraint, ABC):
         cluster2_good_idx = list(range(cluster2_len))
 
         while not np.all(self.kernel_check(sim_kern)):
-            if flag:
+            if remove_from_cluster_1:
                 removal_idx = self.heuristic(sim_kern)
                 cluster1_good_idx.pop(removal_idx)
-                sim_kern = np.delete(sim_kern, removal_idx, 1)
+                sim_kern = np.delete(sim_kern, removal_idx, 0)
                 if self.intra_cluster:
-                    sim_kern = np.delete(sim_kern, removal_idx, 0)
+                    sim_kern = np.delete(sim_kern, removal_idx, 1)
             else:
                 removal_idx = self.heuristic(sim_kern.T)
                 cluster2_good_idx.pop(removal_idx)
-                sim_kern = np.delete(sim_kern, removal_idx, 0)
+                sim_kern = np.delete(sim_kern, removal_idx, 1)
             
-            if flag and not self.intra_cluster:
-                flag = False
-            elif not flag and not self.intra_cluster:
-                flag = True
+            if remove_from_cluster_1 and not self.intra_cluster:
+                remove_from_cluster_1 = False
+            elif not remove_from_cluster_1 and not self.intra_cluster:
+                remove_from_cluster_1 = True
         
         cluster1_idx = np.arange(cluster1_len)
         cluster2_idx = np.arange(cluster2_len)

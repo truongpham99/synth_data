@@ -35,7 +35,8 @@ def flqmi_bounds(ground_set, query_clusters, rare_cluster_idx, common_cluster_id
 
     lbc = LBC(None, metric, [0,1], [0,1])
     q_r_sim_kern = lbc.compute_sim_kern(union_query_cluster, union_rare_cluster)
-    epsilon_2 = 1 - lbc.calculate_constraint(q_r_sim_kern)
+    # epsilon_2 = 1 - lbc.calculate_constraint(q_r_sim_kern)\
+    epsilon_2 = 0.001
     # print(q_r_sim_kern)
     print(epsilon_1, epsilon_2)
 
@@ -88,22 +89,22 @@ def flqmi_bounds(ground_set, query_clusters, rare_cluster_idx, common_cluster_id
     # print(eval_submod_selection - eval_random_selection)
     # print(eval_submod_selection_1 - eval_random_selection_1)
         
-    # print(deltas, delta_bounds)
+    print(deltas, delta_bounds)
 
-    # as_in_r = submod_selection_in_rare.shape[0] 
+    as_in_r = submod_selection_in_rare.shape[0] 
 
-    # eval_lower_bound = as_in_r*(1-epsilon_2)+query_size*(1-epsilon_2)
+    eval_lower_bound = as_in_r*(1-epsilon_2)+query_size*(1-epsilon_2)
 
-    # print()
-    # # print("value: ", eval_submod_selection)
-    # print("A star lower: ", eval_lower_bound)
+    print()
+    # print("value: ", eval_submod_selection)
+    print("A star lower: ", eval_lower_bound)
 
-    # a_in_t = np.concatenate([random_select_clusters[i] for i in common_cluster_idx]).shape[0]
-    # eval_upper_bound = chi + a_in_t*epsilon_1 + query_size
+    a_in_t = np.concatenate([random_select_clusters[i] for i in common_cluster_idx]).shape[0]
+    eval_upper_bound = chi + a_in_t*epsilon_1 + query_size
 
     # print("value: ", eval_random_selection_1)
-    # print("A upper: ", eval_upper_bound)
-    # print(eval_lower_bound  - eval_upper_bound)
+    print("A upper: ", eval_upper_bound)
+    print(eval_lower_bound  - eval_upper_bound)
         
     return upper_bounds, lower_bounds, deltas, delta_bounds
 

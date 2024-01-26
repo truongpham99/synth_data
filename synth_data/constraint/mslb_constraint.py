@@ -12,8 +12,8 @@ class MinimumSimilarityLowerBoundConstraint(SingleSimilarityConstraint):
     def kernel_check(self, sim_kern):
         return sim_kern >= self.threshold
     
-    def heuristic(self, sim_kern):
-        row_sum = np.sum(sim_kern, axis=1)
+    def heuristic(self, sim_kern, axis=1):
+        row_sum = np.sum(sim_kern, axis=axis)
         remove_idx = np.argmin(row_sum)
         return remove_idx
     
@@ -36,7 +36,7 @@ class MaximumSimilarityLowerBoundConstraint(SingleSimilarityConstraint):
     def calculate_constraint(self, sim_kernel):
         return sim_kernel.max(axis=0).min()
     
-    def heuristic(self, sim_kern):
+    def heuristic(self, sim_kern, axis=1):
         print("{} heuristic not implemented".format(self.__str__))
     
     def __str__(self) -> str:
