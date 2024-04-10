@@ -26,8 +26,8 @@ class SingleSimilarityConstraint(Constraint, ABC):
         if self.metric == "cosine":
             norm_cluster_1  = np.sqrt(np.sum(cluster_1 ** 2, axis=-1))
             norm_cluster_2  = np.sqrt(np.sum(cluster_2 ** 2, axis=-1))
-            scale_cluster_1 = cluster_1 / norm_cluster_1
-            scale_cluster_2 = cluster_2 / norm_cluster_2
+            scale_cluster_1 = cluster_1 / norm_cluster_1[:,None]
+            scale_cluster_2 = cluster_2 / norm_cluster_2[:,None]
             similarity_kern = (1 + np.tensordot(scale_cluster_1, scale_cluster_2.T, axes=1)) / 2
         elif self.metric.startswith("rbf"):
             sigma           = float(self.metric.split("_")[1])
